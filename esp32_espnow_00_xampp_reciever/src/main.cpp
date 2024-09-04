@@ -84,8 +84,8 @@ void setup() {
   Serial.begin(115200);
   
   // Set device as a Wi-Fi Station
-  WiFi.mode(WIFI_STA);
-  WiFi.setSleep(WIFI_PS_NONE);
+  WiFi.mode(WIFI_AP_STA);
+  //WiFi.setSleep(WIFI_PS_NONE);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
