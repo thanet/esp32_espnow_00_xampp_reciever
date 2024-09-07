@@ -33,8 +33,8 @@
 //Phototype Function
 void UploadData2Xampp();
 
-int temperature = 0; 
-int humidity = 0;
+float temperature = 0; 
+float humidity = 0;
 
 // Structure example to receive data
 // Must match the sender structure
@@ -55,9 +55,21 @@ typedef struct struct_message {
 
 
 // callback function that will be executed when data is received
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+// void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+//   char macStr[18];
+//   Serial.print("Packet received from: ");
+//   snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
+//            mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+//   Serial.println(macStr);
+//   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
+void OnDataRecv(const uint8_t * mac_addr, const uint8_t *incomingData, int len) {
+  char macStr[18];
+  Serial.print("Packet received from: ");
+  snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
+           mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
+  Serial.println(macStr);
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
-  
+
   board["id"] = incomingReadings.id;
   board["temperature"] = incomingReadings.temp;
   board["humidity"] = incomingReadings.hum;
@@ -113,14 +125,19 @@ void setup() {
   
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
-  esp_now_register_recv_cb(OnDataRecv);
+  esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 }
  
 void loop() {
-    
-    if (temperature > 0 || humidity > 0){
+  Serial.println("Start of Loop Func.");
+  
+    if (temperature > 0 & humidity > 0){
       
       UploadData2Xampp();
+    }
+    else {
+      Serial.println("Temp = " + int(temperature));
+      Serial.println("Hum = " + int(humidity));
     }
   
   Serial.println("End of Loop Func.");
