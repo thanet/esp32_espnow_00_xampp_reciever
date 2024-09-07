@@ -30,6 +30,8 @@
 // For uplod data to server , xampp
   //String URL = "http://192.168.0.113/EspData/upload.php";
 
+//Phototype Function
+void UploadData2Xampp();
 
 int temperature = 0; 
 int humidity = 0;
@@ -95,12 +97,19 @@ void setup() {
   Serial.println(WiFi.localIP());
   Serial.print("Wi-Fi Channel: ");
   Serial.println(WiFi.channel());
+  delay(2000);
+
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
+  else {
+    Serial.println("esp_now_init  and Connected...");
+  }
+  delay(2000);
+
   
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
@@ -108,6 +117,20 @@ void setup() {
 }
  
 void loop() {
+    
+    if (temperature > 0 || humidity > 0){
+      
+      UploadData2Xampp();
+    }
+  
+  Serial.println("End of Loop Func.");
+  delay(5000);
+
+}
+
+//Function for upload data to xampp
+void UploadData2Xampp() {
+  Serial.println("Have Data to up Upload...");
 
   String postData = "temperature=" + String(temperature) + "&humidity=" + String(humidity); 
 
@@ -124,4 +147,5 @@ void loop() {
   Serial.print("payload : "); Serial.println(payload); 
   Serial.println("--------------------------------------------------");
   delay(5000);
+
 }
